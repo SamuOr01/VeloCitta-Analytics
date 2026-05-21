@@ -265,6 +265,7 @@ class FlottaBici:
 
         return cls(biciclette, citta)
 
+
 # Realizza una piccola dimostrazione di polimorfismo:
 
 # def stampa_flotta(biciclette: list) -> None:
