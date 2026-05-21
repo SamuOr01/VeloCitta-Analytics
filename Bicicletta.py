@@ -12,7 +12,10 @@ class Bicicletta:
         self.id_bici = id_bici
         self.tipo = tipo
         self.stazione_corrente = stazione_corrente
-        self.km_percorsi = km_percorsi
+
+        # Aggiunta Incapsulamento
+        self._km_percorsi = km_percorsi
+
         self.disponibile = disponibile
 
 # Metodi obbligatori:
@@ -32,7 +35,10 @@ class Bicicletta:
 
     def restituisci(self, stazione: str, km_aggiunti: float):
         self.stazione_corrente = stazione
-        self.km_percorsi += km_aggiunti
+
+        # Aggiunta parte incapsulamento
+        self.aggiungi_km(km_aggiunti)
+
         self.disponibile = True
 
     def __str__(self):
@@ -47,6 +53,19 @@ class Bicicletta:
     def __repr__(self):
         return f"Bicicletta({self.id_bici}, {self.tipo}, {self.stazione_corrente}, {self.km_percorsi}, {self.disponibile})"
 
+    # Rinomina km_percorsi → _km_percorsi
+    # Crea @property km_percorsi in sola lettura
+    # Crea aggiungi_km(self, km: float) -> None — valida che km > 0 prima di aggiornare
+
+    @property
+    def km_percorsi(self):
+        return self._km_percorsi
+
+    def aggiungi_km(self, km: float):
+        if km <= 0:
+            raise ValueError("I km devono essere positivi")
+
+        self._km_percorsi += km
 
 # Classi Figlie di Bicicletta
 class BiciclettaClassica(Bicicletta):
@@ -96,7 +115,7 @@ class BiciclettaElettrica(Bicicletta):
         else:
             stato = "❌ Non Disponibile"
 
-        return f"[{self.id_bici}] {self.tipo} | 🔋{self.batteria_percentuale}% | {self.stazione_corrente} | {self.km_percorsi:.2f} km | {stato}"
+        return f"[{self.id_bici}] {self.tipo} |🔋{self.batteria_percentuale}% | {self.stazione_corrente} | {self.km_percorsi:.2f} km | {stato}"
 
     def __repr__(self):
         return f"BiciclettaElettrica({self.id_bici}, {self.tipo}, {self.batteria_percentuale}, {self.stazione_corrente}, {self.km_percorsi}, {self.disponibile})"
@@ -113,8 +132,3 @@ class BiciclettaElettrica(Bicicletta):
         self.disponibile = False
 
         return f"Bicicletta {self.id_bici} noleggiata da {utente}"
-
-
-
-
-
