@@ -1,3 +1,6 @@
+import numpy as np
+from numpy.typing import NDArray
+
 # FUNZIONI DI UTILITÀ
 
 
@@ -76,3 +79,13 @@ def riepilogo_corse(lista_durate: list) -> dict:
         "medie": medie,
         "lunghe": lunghe
     }
+
+def stampa_riepilogo_analisi(array: NDArray, nome: str):
+    print(f"L'array {nome}: {array}\n"
+          f"\nForma dell'array {nome}: {array.shape}\n"
+          f"\nTipo dell'array {nome}: {array.dtype}\n"
+          f"\nMinimo dell'array {nome}: {array.min()}\n"
+          f"\nMassimo dell'array {nome}: {array.max()}\n"
+          f"\nMedia dell'array {nome}: {array.mean()}\n"
+          f"\nStandard Deviation dell'array {nome}: {array.std()}\n"
+          )
