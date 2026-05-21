@@ -52,13 +52,11 @@ class Bicicletta:
 class BiciclettaClassica(Bicicletta):
 
     # Aggiunge attributo taglia: str ("S", "M", "L")
-
     def __init__(self, id_bici: str, tipo: str, stazione_corrente: str, km_percorsi: float, disponibile: bool, taglia: str):
         super().__init__(id_bici, tipo, stazione_corrente, km_percorsi, disponibile)
         self.taglia = taglia
 
     # Override di __str__ e __repr__ per includere la taglia
-
     def __str__(self):
         if self.disponibile:
             stato = "✅ Disponibile"
@@ -69,13 +67,54 @@ class BiciclettaClassica(Bicicletta):
         return f"[{self.id_bici}] {self.tipo} | taglia: {self.taglia} | {self.stazione_corrente} | {self.km_percorsi:.2f} km | {stato}"
 
     def __repr__(self):
-        return f"Bicicletta({self.id_bici}, {self.tipo}, {self.taglia},{self.stazione_corrente}, {self.km_percorsi}, {self.disponibile})"
+        return f"BiciclettaClassica({self.id_bici}, {self.tipo}, {self.taglia},{self.stazione_corrente}, {self.km_percorsi}, {self.disponibile})"
 
 
 class BiciclettaElettrica(Bicicletta):
 
     # Aggiunge attributo batteria_percentuale: int (0–100)
-
-    def __init__(self, id_bici: str, tipo: str, stazione_corrente: str, km_percorsi: float, disponibile: bool):
+    def __init__(self, id_bici: str, tipo: str, stazione_corrente: str, km_percorsi: float, disponibile: bool, batteria_percentuale: int):
         super().__init__(id_bici, tipo, stazione_corrente, km_percorsi, disponibile)
-        pass
+        self.batteria_percentuale = batteria_percentuale
+
+    # - Aggiunge ricarica(self, percentuale: int) -> None (massimo 100)
+    def ricarica(self, percentuale: int):
+
+        if percentuale < 0:
+            raise ValueError("La percentuale della batteria non può avere valori negativi")
+
+        else:
+            self.batteria_percentuale += percentuale
+            if self.batteria_percentuale > 100:
+                self.batteria_percentuale = 100
+
+    # - Override di __str__ e __repr__ per mostrare livello batteria, es. 🔋 78%
+    def __str__(self):
+        if self.disponibile:
+            stato = "✅ Disponibile"
+
+        else:
+            stato = "❌ Non Disponibile"
+
+        return f"[{self.id_bici}] {self.tipo} | 🔋{self.batteria_percentuale}% | {self.stazione_corrente} | {self.km_percorsi:.2f} km | {stato}"
+
+    def __repr__(self):
+        return f"BiciclettaElettrica({self.id_bici}, {self.tipo}, {self.batteria_percentuale}, {self.stazione_corrente}, {self.km_percorsi}, {self.disponibile})"
+
+    # - Override di noleggia — solleva ValueError se batteria_percentuale < 20
+    def noleggia(self, utente: str) -> str:
+
+        if not self.disponibile:
+            raise ValueError("Bicicletta già in uso")
+
+        if self.batteria_percentuale < 20:
+            raise ValueError("Questa bicicletta non ha carica sufficiente")
+
+        self.disponibile = False
+
+        return f"Bicicletta {self.id_bici} noleggiata da {utente}"
+
+
+
+
+

@@ -1,5 +1,5 @@
 # Import delle classi Bicicletta
-from Bicicletta import Bicicletta
+from Bicicletta import Bicicletta, BiciclettaClassica, BiciclettaElettrica
 
 # Classe di gestione delle bici
 class FlottaBici:
@@ -24,12 +24,20 @@ class FlottaBici:
 
     def aggiungi(self, bici: Bicicletta):
 
-        if bici:
-            self.biciclette.append(bici)
+        if not isinstance(bici, Bicicletta):
+            raise TypeError("Stai cercando di aggiungere un oggetto diverso da una bicicletta")
+
+        # controllo duplicati
+        for b in self.biciclette:
+            if b.id_bici == bici.id_bici:
+                raise ValueError(f"Bicicletta con id {bici.id_bici} già presente nella flotta")
+
+        self.biciclette.append(bici)
 
     def rimuovi(self, id_bici: str):
 
         for bici in self.biciclette:
+
             if bici.id_bici == id_bici:
                 self.biciclette.remove(bici)
                 return
@@ -39,6 +47,7 @@ class FlottaBici:
     def cerca_per_id(self, id_bici: str) -> Bicicletta:
 
         for bici in self.biciclette:
+
             if bici.id_bici == id_bici:
                 return bici
         else:
@@ -64,8 +73,10 @@ class FlottaBici:
 
         for bici in self.biciclette:
             km_totali += bici.km_percorsi
+
         if totale > 0:
             km_medi = km_totali / totale
+
         else:
             km_medi = 0
 
@@ -86,13 +97,35 @@ class FlottaBici:
         biciclette = []
 
         for dato in dati:
-            bici = Bicicletta(
-                dato["id"],
-                dato["tipo"],
-                dato["stazione"],
-                dato["km"],
-                dato["disponibile"]
-            )
-            biciclette.append(bici)
+
+            tipo = dato.get("tipo")
+
+            if tipo is None:
+                raise ValueError("Tipo bicicletta mancante")
+
+            if tipo == "classica":
+                bici = BiciclettaClassica(
+                    id_bici = dato["id"],
+                    tipo = tipo,
+                    stazione_corrente = dato["stazione"],
+                    km_percorsi = dato["km"],
+                    disponibile = dato["disponibile"],
+                    taglia = dato["taglia"]
+                )
+                biciclette.append(bici)
+
+            elif tipo == "elettrica":
+                bici = BiciclettaElettrica(
+                    id_bici = dato["id"],
+                    tipo = tipo,
+                    stazione_corrente = dato["stazione"],
+                    km_percorsi = dato["km"],
+                    disponibile = dato["disponibile"],
+                    batteria_percentuale = dato["batteria"]
+                )
+                biciclette.append(bici)
+
+            else:
+                raise ValueError(f"Tipo bicicletta non valido: {tipo}")
 
         return cls(biciclette, citta)

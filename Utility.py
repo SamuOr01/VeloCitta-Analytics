@@ -34,7 +34,7 @@ def classifica_corsa(durata_minuti: int) -> str:
     elif durata_minuti < 15:
         return "breve"
 
-    elif 15 <=durata_minuti <= 45:
+    elif durata_minuti <= 45:
         return "media"
 
     else:
@@ -76,14 +76,3 @@ def riepilogo_corse(lista_durate: list) -> dict:
         "medie": medie,
         "lunghe": lunghe
     }
-
-
-durate = [10, 20, 50, 30, 5]
-
-riepilogo = riepilogo_corse(durate)
-
-for chiave, valore in riepilogo.items():
-    if chiave in ["totale", "media", "max", "min"]:
-        print(f"- {chiave}: {valore} minuti")
-    else:
-        print(f"- {chiave}: {valore}")
