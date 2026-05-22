@@ -236,7 +236,7 @@ class FlottaBici:
             if tipo is None:
                 raise ValueError("Tipo bicicletta mancante")
 
-            if tipo == "classica":
+            if tipo == "Classica":
                 bici = BiciclettaClassica(
                     id_bici = dato["id"],
                     tipo = tipo,
@@ -247,7 +247,7 @@ class FlottaBici:
                 )
                 biciclette.append(bici)
 
-            elif tipo == "elettrica":
+            elif tipo == "Elettrica":
                 bici = BiciclettaElettrica(
                     id_bici = dato["id"],
                     tipo = tipo,
