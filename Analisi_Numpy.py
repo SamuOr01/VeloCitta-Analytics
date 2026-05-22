@@ -1,8 +1,8 @@
+# Task 5 — Analisi Numerica con NumPy
+
 from Utility import stampa_riepilogo_analisi
 
 import numpy as np
-
-# Task 5 — Analisi Numerica con NumPy
 
 #     5.1 — Generazione dati
 
