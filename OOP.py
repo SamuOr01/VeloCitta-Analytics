@@ -1,5 +1,3 @@
-from Utility import calcola_durata_minuti, classifica_corsa, riepilogo_corse, stampa_riepilogo_analisi
-
 # Classe Padre Bicicletta
 class Bicicletta:
 
