@@ -3,6 +3,8 @@
 import pandas as pd
 import numpy as np
 from numpy import random
+
+# Funzione custom per classificare le corse
 from Utility import classifica_corsa
 
 
@@ -20,7 +22,10 @@ from Utility import classifica_corsa
 citta = ["Milano", "Roma", "Torino"]
 fasce = ["Mattina", "Pomeriggio", "Sera"]
 
+# Creazione df_corse con 80+ righe, almeno 3 città, almeno 3 date, 5 duplicati e 8 NaN sparsi
 structure_corse = {
+
+    # Uso numpy.random per riempire il dataframe con valori casuali
     "id_corsa" : range(1, 81),
     "id_bici" : random.randint(1, 21, 80),
     "id_utente" : random.randint(1, 26, 80),
@@ -40,11 +45,11 @@ indici_km = random.choice(df_corse.index, 4, replace=False)
 df_corse.loc[indici_durata, "durata_minuti"] = np.nan
 df_corse.loc[indici_km, "km_percorsi"] = np.nan
 
-# Inserimento duplicati
+# Inserimento duplicati (prime 5 righe)
 duplicati = df_corse.head(5)
 df_corse = pd.concat([df_corse, duplicati], ignore_index=True)
 
-# Stampa le prime 5 righe del dataframe per check
+# Stampa il DataFrame
 print("DF CORSE")
 print(df_corse)
 
@@ -55,8 +60,10 @@ print(df_corse)
 
 tipi_bici = ["Elettrica", "Classica"]
 
-
+# Creazione di df_bici con almeno 20 righe
 structure_bici = {
+
+    # Uso numpy.random per riempire il dataframe con valori casuali
     "id_bici" : range(1, 21),
     "tipo" : random.choice(tipi_bici, 20),
     "citta" : random.choice(citta, 20),
@@ -64,6 +71,7 @@ structure_bici = {
     "costo_acquisto" : random.randint(300, 3000, 20)
 }
 
+# Stampa il DataFrame
 df_bici = pd.DataFrame(structure_bici)
 
 print("\nDF BICI")
@@ -81,7 +89,10 @@ nomi = [
 
 abbonamenti = ["Standard", "Plus", "Premium"]
 
+# Creazione di df_utenti con almeno 25 righe
 structure_utenti = {
+
+    # Uso numpy.random per riempire il dataframe con valori casuali
     "id_utente" : range(1, 26),
     "nome" : random.choice(nomi, 25),
     "citta" : random.choice(citta, 25),
@@ -91,8 +102,10 @@ structure_utenti = {
 
 df_utenti = pd.DataFrame(structure_utenti)
 
+# Stampa il DataFrame
 print("\nDF UTENTI")
 print(df_utenti)
+
 
 # 6.2 — Pulizia dati
 
@@ -103,22 +116,28 @@ print(df_utenti)
 #   - Aggiungi colonne: mese (int) e giorno_settimana (es. "Lunedì")
 #   - Stampa .info() e .describe() prima e dopo la pulizia
 
-# Prima della pulizia
+# Stampa Info e Describe prima della pulizia
 print("\nINFO prima della pulizia")
 print(df_corse.info())
 print("\nDESCRIBE prima la pulizia")
 print(df_corse.describe())
 
+# Inizia la pulizia del dataframe eliminando i duplicati
 df_corse = df_corse.drop_duplicates()
 
-df_corse['durata_minuti'] = df_corse['durata_minuti'].fillna(df_corse.groupby('citta')['durata_minuti'].transform("median").round(2))
+# Sostituisce i valori Nan di durata_minuti con la mediana per città usando groupby + transform
+df_corse["durata_minuti"] = df_corse["durata_minuti"].fillna(df_corse.groupby("citta")["durata_minuti"].transform("median").round(2))
 
-df_corse['km_percorsi'] = df_corse['km_percorsi'].fillna(round(df_corse['durata_minuti'] * 0.18, 2))
+# Sostituisce i valori Nan di km_percorsi con il prodotto di durata_minuti * 0.18
+df_corse["km_percorsi"] = df_corse["km_percorsi"].fillna(round(df_corse["durata_minuti"] * 0.18, 2))
 
+# Converte data_corsa da stringa a datetime
 df_corse["data_corsa"] = pd.to_datetime(df_corse["data_corsa"])
 
+# Aggiunte colonne mese e giorno_settimana
 df_corse["mese"] = df_corse["data_corsa"].dt.month
 
+# Corrispondenze per il mapping
 giorni_ITA_ENG = {
     "Monday": "Lunedì",
     "Tuesday": "Martedì",
@@ -130,10 +149,11 @@ giorni_ITA_ENG = {
 }
 df_corse["giorno_settimana"] = df_corse["data_corsa"].dt.day_name().map(giorni_ITA_ENG)
 
+# Stampa il DataFrame aggiornato
 print("\nDF CORSE 2.0")
 print(df_corse)
 
-# Dopo la pulizia
+# # Stampa Info e Describe dopo la pulizia
 print("\nINFO dopo la pulizia")
 print(df_corse.info())
 print("\nDESCRIBE dopo la pulizia")
@@ -149,10 +169,13 @@ print(df_corse.describe())
 #       Media (15–45 min): € 2.50 + € 0.10 × (minuti − 15)
 #       Lunga (> 45 min): € 5.00 + € 0.08 × (minuti − 45)
 
-df_corse['tipo_corsa'] = df_corse['durata_minuti'].apply(classifica_corsa)
+# Applico classifica_corsa() per creare la colonna tipo_corsa
+df_corse["tipo_corsa"] = df_corse["durata_minuti"].apply(classifica_corsa)
 
+# Calcolo la velocita_media
 df_corse["velocita_media"] = round(df_corse["km_percorsi"] / (df_corse["durata_minuti"] / 60), 2)
 
+# Funzione per calcolare il costo stimato arrotondato a 2 decimali
 def calcola_costo(minuti):
 
     if minuti < 15:
@@ -164,8 +187,10 @@ def calcola_costo(minuti):
     else:
         return round(5.00 + (0.08 * (minuti - 45)), 2)
 
-df_corse["costo_stimato"] = df_corse['durata_minuti'].apply(calcola_costo)
+# Applico calcola_costo per creare la colonna costo_stimato
+df_corse["costo_stimato"] = df_corse["durata_minuti"].apply(calcola_costo)
 
+# Stampa il DataFrame aggiornato
 print("\nDF CORSE 3.0")
 print(df_corse)
 
@@ -178,28 +203,34 @@ print(df_corse)
 #   - Per fascia_oraria: numero corse e velocità media
 #   - Pivot table: indice = citta, colonne = tipo_corsa, valori = numero corse
 
-aggregazioni_citta = df_corse.groupby('citta').agg(
+# Aggregazione per città con groupby
+aggregazioni_citta = df_corse.groupby("citta").agg(
     numero_corse=("id_corsa", "count"),
     durata_media=("durata_minuti", "mean"),
     km_totali=("km_percorsi", "sum"),
     costo_totale=("costo_stimato", "sum")
 )
 
+# Stampa l'aggregazione
 print("\nAGGREGAZIONI CITTÀ")
 print(aggregazioni_citta)
 
 
-aggregazioni_fascia_oraria = df_corse.groupby('fascia_oraria').agg(
+# Aggregazione per fascia_oraria con groupby
+aggregazioni_fascia_oraria = df_corse.groupby("fascia_oraria").agg(
     numero_corse = ("id_corsa", "count"),
     velocita_media = ("velocita_media", "mean")
 )
 
+# Stampa l'aggregazione
 print("\nAGGREGAZIONI FASCIA ORARIA")
 print(aggregazioni_fascia_oraria)
 
 
+# Creazione Pivot Table
 pivot_table = df_corse.pivot_table(index = "citta", columns = "tipo_corsa", values = "id_corsa", aggfunc="count")
 
+# Stampa il Pivot Table
 print("\nPIVOT TABLE")
 print(pivot_table)
 
@@ -209,11 +240,13 @@ print(pivot_table)
 #   - Unisci df_corse + df_bici su id_bici, poi + df_utenti su id_utente
 #   - Stampa le prime 5 righe e le colonne disponibili
 
+# Effettuo il merge rinominando le colonne che hanno lostesso nome per differenziarle
 df_prima_parte = pd.merge(df_corse, df_bici, on = "id_bici", suffixes=("_corse", "_bici"))
 df_completo = pd.merge(df_prima_parte, df_utenti, on = "id_utente", suffixes=("", "_utente"))
 
 df_completo = df_completo.rename(columns={"citta": "citta_utente"})
 
+# Stampa le prime 5 righe del DataFrame completo
 print("\nDF COMPLETO")
 print(df_completo.head(5))
 
@@ -224,17 +257,23 @@ print(df_completo.head(5))
 #   - I 3 utenti Premium con costo totale più alto
 #   - Aggiungi altre statistiche a piacere
 
-top_corse_bici = df_completo['id_bici'].value_counts().head(5)
+# Top 5 biciclette con più corse
+top_corse_bici = df_completo["id_bici"].value_counts().head(5)
 
+# Stampa la Top
 print("\nTOP CORSE BICI")
 print(top_corse_bici)
 
+# Top 3 Utenti Premium con costo totale più alto
 top_utenti_premiun = df_completo[df_completo["tipo_abbonamento"] == "Premium"].groupby(["id_utente", "nome"]).agg(costo_totale=("costo_stimato", "sum")).sort_values(by="costo_totale", ascending=False).head(3)
 
+# Stampa la Top
 print("\nTOP UTENTI PREMIUM")
 print(top_utenti_premiun)
 
+# Top 3 aggiuntiva delle fasce orarie con più corse
 top_fascia_oraria = top_fascia_oraria = df_completo["fascia_oraria"].value_counts().head(3)
 
+# Stampa la Top
 print("\nTOP FASCIA ORARIA")
 print(top_fascia_oraria)
