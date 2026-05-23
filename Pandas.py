@@ -104,7 +104,9 @@ print(df_utenti)
 #   - Stampa .info() e .describe() prima e dopo la pulizia
 
 # Prima della pulizia
+print("\nINFO prima della pulizia")
 print(df_corse.info())
+print("\nDESCRIBE prima la pulizia")
 print(df_corse.describe())
 
 df_corse = df_corse.drop_duplicates()
@@ -128,10 +130,13 @@ giorni_ITA_ENG = {
 }
 df_corse["giorno_settimana"] = df_corse["data_corsa"].dt.day_name().map(giorni_ITA_ENG)
 
+print("\nDF CORSE 2.0")
 print(df_corse)
 
 # Dopo la pulizia
+print("\nINFO dopo la pulizia")
 print(df_corse.info())
+print("\nDESCRIBE dopo la pulizia")
 print(df_corse.describe())
 
 
@@ -161,6 +166,7 @@ def calcola_costo(minuti):
 
 df_corse["costo_stimato"] = df_corse['durata_minuti'].apply(calcola_costo)
 
+print("\nDF CORSE 3.0")
 print(df_corse)
 
 
@@ -179,6 +185,7 @@ aggregazioni_citta = df_corse.groupby('citta').agg(
     costo_totale=("costo_stimato", "sum")
 )
 
+print("\nAGGREGAZIONI CITTÀ")
 print(aggregazioni_citta)
 
 
@@ -187,11 +194,13 @@ aggregazioni_fascia_oraria = df_corse.groupby('fascia_oraria').agg(
     velocita_media = ("velocita_media", "mean")
 )
 
+print("\nAGGREGAZIONI FASCIA ORARIA")
 print(aggregazioni_fascia_oraria)
 
 
 pivot_table = df_corse.pivot_table(index = "citta", columns = "tipo_corsa", values = "id_corsa", aggfunc="count")
 
+print("\nPIVOT TABLE")
 print(pivot_table)
 
 
@@ -205,6 +214,7 @@ df_completo = pd.merge(df_prima_parte, df_utenti, on = "id_utente", suffixes=(""
 
 df_completo = df_completo.rename(columns={"citta": "citta_utente"})
 
+print("\nDF COMPLETO")
 print(df_completo.head(5))
 
 
@@ -216,8 +226,15 @@ print(df_completo.head(5))
 
 top_corse_bici = df_completo['id_bici'].value_counts().head(5)
 
+print("\nTOP CORSE BICI")
 print(top_corse_bici)
 
 top_utenti_premiun = df_completo[df_completo["tipo_abbonamento"] == "Premium"].groupby(["id_utente", "nome"]).agg(costo_totale=("costo_stimato", "sum")).sort_values(by="costo_totale", ascending=False).head(3)
 
+print("\nTOP UTENTI PREMIUM")
 print(top_utenti_premiun)
+
+top_fascia_oraria = top_fascia_oraria = df_completo["fascia_oraria"].value_counts().head(3)
+
+print("\nTOP FASCIA ORARIA")
+print(top_fascia_oraria)
