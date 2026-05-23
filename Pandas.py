@@ -25,7 +25,7 @@ structure_corse = {
     "id_bici" : random.randint(1, 21, 80),
     "id_utente" : random.randint(1, 26, 80),
     "citta" : random.choice(citta, 80),
-    "data_corsa" : random.choice(["2026-04-28", "2026-06-14", "2026-09-11", "2026-12-31"], 80),
+    "data_corsa" : random.choice(["2026-04-28", "2026-06-14", "2026-09-11"], 80),
     "durata_minuti" : np.round(random.uniform(5, 90, 80), 2),
     "km_percorsi" : np.round(random.uniform(1, 20, 80), 2),
     "fascia_oraria" : random.choice(fasce, 80)
