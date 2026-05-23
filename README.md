@@ -12,11 +12,12 @@ pip install -r requirements.txt
 ```
 Successivamente eseguire gli script nel seguente ordine:
 
-    1) OOP.py
-    2) Analisi_Numpy.py
-    3) Pandas.py
-    4) Visualizzazione.py
+    1. OOP.py
+    2. Analisi_Numpy.py
+    3. Pandas.py
+    4. Visualizzazione.py
 
+    Nota
     NB Il file QuerySQL.sql contiene solamente la spiegazione teorica sull'interrogazione di ipotetiche tabelle.
     NB Il Utility.py contiene solamente delle funzioni di utilità che vengono richiamate dagli altri script
 
